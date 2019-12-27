@@ -32,7 +32,7 @@ class CubingIcons {
   static const IconData e555 = const IconData(0xe809, fontFamily: fontFamily);
   static const IconData e555bf = const IconData(0xe80a, fontFamily: fontFamily);
   static const IconData e666 = const IconData(0xe80b, fontFamily: fontFamily);
-  static const IconData glyph = const IconData(0xe80c, fontFamily: fontFamily);
+  static const IconData e777 = const IconData(0xe80c, fontFamily: fontFamily);
   static const IconData eClock = const IconData(0xe80d, fontFamily: fontFamily);
   static const IconData eMinx = const IconData(0xe80e, fontFamily: fontFamily);
   static const IconData ePyram = const IconData(0xe80f, fontFamily: fontFamily);
