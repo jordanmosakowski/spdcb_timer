@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 class Database{
   int currentSession;
   double freezeTime;
-  int input;//input method, 0:keyboard,1:type,2:stackmat,
+  int input;//input method, 0:keyboard, 1:type, 2:stackmat,
   int inspection;//inspection Time
   List<Session> sessions;
 }
