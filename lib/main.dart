@@ -86,7 +86,7 @@ class _HomeState extends State<Home> {
           }
         }
         else if(e.runtimeType==RawKeyUpEvent){
-          if(hasBeenReleased){
+          if(hasBeenReleased && e.logicalKey == LogicalKeyboardKey.space){
             if(!isInspecting && hasInspection){
               isInspecting = true;
               inspectingStopwatch.reset();
@@ -138,43 +138,105 @@ class _HomeState extends State<Home> {
             ),
           ],
         ),
-        body: Stack(
-          children: <Widget>[
-            Positioned(
-              top: 10,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Wrap(
-                    children: <Widget>[
-                      Icon(CubingIcons.e222),
-                      Icon(CubingIcons.e333),
-                      Icon(CubingIcons.e444),
-                      Icon(CubingIcons.e555),
-                      Icon(CubingIcons.e666),
-                      Icon(CubingIcons.e777),
-                      Icon(CubingIcons.ePyram),
-                      Icon(CubingIcons.eMinx),
-                      Icon(CubingIcons.eSkewb),
-                      Icon(CubingIcons.eClock),
-                      Icon(CubingIcons.eSq1),
-                    ],
-                  ),
-                  Center(child: Text("B' R' F2 L2 D2 L B2 R B2 R' F2 R2 B2 U B2 L B2 L' U B'"))
-                ],
+        body: GestureDetector(
+          onTapDown: (TapDownDetails details){
+            if(isSolving){
+              isSolving = false;
+              mainStopwatch.stop();
+              mainTimer = null;
+              hasBeenReleased = false;
+            }
+            else if (!isSolving && (isInspecting || !hasInspection) && !isFreezing){
+              isFreezing = true;
+              freezingStopwatch.reset();
+              freezingStopwatch.start();
+              setState((){});
+              freezingTimer = Timer.periodic(Duration(milliseconds: 1),(Timer timer){
+                setState((){});
+              });
+            }
+          },
+          onTapUp: (TapUpDetails details){//TOOD: Dragging finger doesn't work well
+            if(hasBeenReleased){
+              if(!isInspecting && hasInspection){
+                isInspecting = true;
+                inspectingStopwatch.reset();
+                inspectingStopwatch.start();
+                setState((){});
+                inspectingTimer = Timer.periodic(Duration(seconds: 1), (Timer timer){
+                  setState((){});
+                });
+              }
+              else if(!isSolving && (isInspecting || !hasInspection) && isFreezing && freezingStopwatch.elapsedMilliseconds>=freezeTime){
+                isSolving = true;
+                isInspecting = false;
+                isFreezing = false;
+                inspectingStopwatch.stop();
+                freezingStopwatch.stop();
+                inspectingTimer = null;
+                mainStopwatch.reset();
+                mainStopwatch.start();
+                mainTimer = Timer.periodic(Duration(milliseconds: 1), (Timer timer){
+                  setState((){});
+                });
+              }
+              else if(isFreezing  && freezingStopwatch.elapsedMilliseconds<freezeTime){
+                isFreezing = false;
+                freezingStopwatch.stop();
+                freezingTimer = null;
+              }
+            }
+            else{
+              hasBeenReleased = true;
+            }
+          },
+          child: Stack(
+            children: <Widget>[
+              Positioned(
+                top:0,
+                bottom:0,
+                left:0,
+                right:0,
+                child: Container(
+                  color: Colors.transparent,
+                )
               ),
-            ),
-            Center(
-              child: Text(
-                isInspecting ? (15-(inspectingStopwatch.elapsedMilliseconds/1000).floor()).toString() : specialMinutes(mainStopwatch.elapsedMilliseconds/1000.0),
-                style: TextStyle(
-                  fontSize: 100,
-                  color: isFreezing ? (freezingStopwatch.elapsedMilliseconds>=freezeTime ? Colors.green : Colors.red) : Colors.black,
+              Positioned(
+                top: 10,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Wrap(
+                      children: <Widget>[
+                        Icon(CubingIcons.e222),
+                        Icon(CubingIcons.e333),
+                        Icon(CubingIcons.e444),
+                        Icon(CubingIcons.e555),
+                        Icon(CubingIcons.e666),
+                        Icon(CubingIcons.e777),
+                        Icon(CubingIcons.ePyram),
+                        Icon(CubingIcons.eMinx),
+                        Icon(CubingIcons.eSkewb),
+                        Icon(CubingIcons.eClock),
+                        Icon(CubingIcons.eSq1),
+                      ],
+                    ),
+                    Center(child: Text("B' R' F2 L2 D2 L B2 R B2 R' F2 R2 B2 U B2 L B2 L' U B'"))
+                  ],
                 ),
               ),
-            )
-          ],
+              Center(
+                child: Text(
+                  isInspecting ? (15-(inspectingStopwatch.elapsedMilliseconds/1000).floor()).toString() : specialMinutes(mainStopwatch.elapsedMilliseconds/1000.0),
+                  style: TextStyle(
+                    fontSize: 100,
+                    color: isFreezing ? (freezingStopwatch.elapsedMilliseconds>=freezeTime ? Colors.green : Colors.red) : Colors.black,
+                  ),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
