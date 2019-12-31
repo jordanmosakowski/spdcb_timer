@@ -8,6 +8,7 @@ class Database{
   int input;//input method, 0:keyboard, 1:type, 2:stackmat,
   int inspection;//inspection Time
   List<Session> sessions;
+  int versionCode;//should match ios/Android build #s
 }
 
 class Session{

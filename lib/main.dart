@@ -1,19 +1,45 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:spdcb_timer_new/cubing_icons.dart';
+import 'package:spdcb_timer_new/scramble_icon.dart';
+import 'package:spdcb_timer_new/settings_page.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
+
+  Color colorPrimary = Colors.white;
+  Color colorAccent = Color.fromRGBO(200, 200, 200, 1.0);
+  Color colorBackground = Colors.grey[900];
+  Color colorSecondP = Colors.white;
+  Color colorSecondB = Colors.black;
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'SPDCB Timer',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        scaffoldBackgroundColor: colorBackground,
+        textTheme: TextTheme(
+          body1: TextStyle(
+            color: colorPrimary
+          ),
+        ),
+        disabledColor: colorAccent,
+        primaryColor: colorSecondB,
+        primaryTextTheme: TextTheme(
+          title: TextStyle(
+            color: colorSecondP,
+          ),
+        ),
+        primaryIconTheme: IconThemeData(
+          color: colorSecondP,
+        )
+
       ),
       home: Home(),
     );
@@ -35,6 +61,7 @@ class _HomeState extends State<Home> {
   Stopwatch mainStopwatch = Stopwatch();
   Stopwatch freezingStopwatch = Stopwatch();
   Stopwatch inspectingStopwatch = Stopwatch();
+  String currentScramble = "e333";
 
   Timer mainTimer;
   Timer freezingTimer;
@@ -58,6 +85,12 @@ class _HomeState extends State<Home> {
     }
   }
 
+  void changeScramble(String id){
+    setState((){
+      currentScramble = id;
+    });
+  }
+
   final FocusNode keyboardFocusNode = FocusNode();
   @override
   Widget build(BuildContext context) {
@@ -65,16 +98,15 @@ class _HomeState extends State<Home> {
     return RawKeyboardListener(
       focusNode: keyboardFocusNode,
       onKey: (RawKeyEvent e){
-        print(e.logicalKey);
         if(e.runtimeType==RawKeyDownEvent){
-          if(e.logicalKey == LogicalKeyboardKey.space){
-            if(isSolving){
-              isSolving = false;
-              mainStopwatch.stop();
-              mainTimer = null;
-              hasBeenReleased = false;
-            }
-            else if (!isSolving && (isInspecting || !hasInspection) && !isFreezing){
+          if(isSolving){
+            isSolving = false;
+            mainStopwatch.stop();
+            mainTimer = null;
+            hasBeenReleased = false;
+          }
+          else if(e.logicalKey == LogicalKeyboardKey.space){
+            if (!isSolving && (isInspecting || !hasInspection) && !isFreezing){
               isFreezing = true;
               freezingStopwatch.reset();
               freezingStopwatch.start();
@@ -125,9 +157,9 @@ class _HomeState extends State<Home> {
           title: Text("SPDCB Timer"),
           actions: <Widget>[
             IconButton(
-              icon: Icon(Icons.settings),
+              icon: Icon(Icons.settings,),
               onPressed: (){
-
+                Navigator.of(context).push(MaterialPageRoute(builder: (builder)=>SettingsPage()));
               },
             ),
             IconButton(
@@ -140,24 +172,27 @@ class _HomeState extends State<Home> {
         ),
         body: GestureDetector(
           onTapDown: (TapDownDetails details){
-            if(isSolving){
-              isSolving = false;
-              mainStopwatch.stop();
-              mainTimer = null;
-              hasBeenReleased = false;
-            }
-            else if (!isSolving && (isInspecting || !hasInspection) && !isFreezing){
-              isFreezing = true;
-              freezingStopwatch.reset();
-              freezingStopwatch.start();
-              setState((){});
-              freezingTimer = Timer.periodic(Duration(milliseconds: 1),(Timer timer){
+            if(!kIsWeb){
+              if(isSolving){
+                isSolving = false;
+                mainStopwatch.stop();
+                mainTimer = null;
+                hasBeenReleased = false;
+              }
+              else if (!isSolving && (isInspecting || !hasInspection) && !isFreezing){
+                isFreezing = true;
+                freezingStopwatch.reset();
+                freezingStopwatch.start();
                 setState((){});
-              });
+                freezingTimer = Timer.periodic(Duration(milliseconds: 1),(Timer timer){
+                  setState((){});
+                });
+              }
             }
+
           },
           onTapUp: (TapUpDetails details){//TOOD: Dragging finger doesn't work well
-            if(hasBeenReleased){
+            if(hasBeenReleased && !kIsWeb){
               if(!isInspecting && hasInspection){
                 isInspecting = true;
                 inspectingStopwatch.reset();
@@ -203,23 +238,25 @@ class _HomeState extends State<Home> {
               ),
               Positioned(
                 top: 10,
+                left:0,
+                right:0,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Wrap(
                       children: <Widget>[
-                        Icon(CubingIcons.e222),
-                        Icon(CubingIcons.e333),
-                        Icon(CubingIcons.e444),
-                        Icon(CubingIcons.e555),
-                        Icon(CubingIcons.e666),
-                        Icon(CubingIcons.e777),
-                        Icon(CubingIcons.ePyram),
-                        Icon(CubingIcons.eMinx),
-                        Icon(CubingIcons.eSkewb),
-                        Icon(CubingIcons.eClock),
-                        Icon(CubingIcons.eSq1),
+                        ScrambleIcon(currentScramble,"e222",CubingIcons.e222,changeScramble),
+                        ScrambleIcon(currentScramble,"e333",CubingIcons.e333,changeScramble),
+                        ScrambleIcon(currentScramble,"e444",CubingIcons.e444,changeScramble),
+                        ScrambleIcon(currentScramble,"e555",CubingIcons.e555,changeScramble),
+                        ScrambleIcon(currentScramble,"e666",CubingIcons.e666,changeScramble),
+                        ScrambleIcon(currentScramble,"e777",CubingIcons.e777,changeScramble),
+                        ScrambleIcon(currentScramble,"ePyram",CubingIcons.ePyram,changeScramble),
+                        ScrambleIcon(currentScramble,"eMinx",CubingIcons.eMinx,changeScramble),
+                        ScrambleIcon(currentScramble,"eSkewb",CubingIcons.eSkewb,changeScramble),
+                        ScrambleIcon(currentScramble,"eClock",CubingIcons.eClock,changeScramble),
+                        ScrambleIcon(currentScramble,"eSq1",CubingIcons.eSq1,changeScramble),
                       ],
                     ),
                     Center(child: Text("B' R' F2 L2 D2 L B2 R B2 R' F2 R2 B2 U B2 L B2 L' U B'"))
@@ -231,7 +268,7 @@ class _HomeState extends State<Home> {
                   isInspecting ? (15-(inspectingStopwatch.elapsedMilliseconds/1000).floor()).toString() : specialMinutes(mainStopwatch.elapsedMilliseconds/1000.0),
                   style: TextStyle(
                     fontSize: 100,
-                    color: isFreezing ? (freezingStopwatch.elapsedMilliseconds>=freezeTime ? Colors.green : Colors.red) : Colors.black,
+                    color: isFreezing ? (freezingStopwatch.elapsedMilliseconds>=freezeTime ? Colors.green : Colors.red) : null,
                   ),
                 ),
               )
