@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,34 +15,47 @@ class MyApp extends StatelessWidget {
   Color colorPrimary = Colors.white;
   Color colorAccent = Color.fromRGBO(200, 200, 200, 1.0);
   Color colorBackground = Colors.grey[900];
-  Color colorSecondP = Colors.white;
-  Color colorSecondB = Colors.black;
+  Color colorSecondP = Colors.black;
+  Color colorSecondB = Colors.white;
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'SPDCB Timer',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        scaffoldBackgroundColor: colorBackground,
-        textTheme: TextTheme(
-          body1: TextStyle(
-            color: colorPrimary
+    return DynamicTheme(
+      data: (brightness) => ThemeData(
+          scaffoldBackgroundColor: colorBackground,
+          textTheme: TextTheme(
+            body1: TextStyle(
+                color: colorPrimary
+            ),
+            title: TextStyle(
+              color: colorPrimary
+            )
           ),
-        ),
-        disabledColor: colorAccent,
-        primaryColor: colorSecondB,
-        primaryTextTheme: TextTheme(
-          title: TextStyle(
+          dialogBackgroundColor: colorBackground,
+          dialogTheme: DialogTheme(
+            contentTextStyle: TextStyle(
+              color: colorPrimary,
+            ),
+          ),
+          disabledColor: colorAccent,
+          primaryColor: colorSecondB,
+          primaryTextTheme: TextTheme(
+            title: TextStyle(
+              color: colorSecondP,
+            ),
+          ),
+          primaryIconTheme: IconThemeData(
             color: colorSecondP,
-          ),
-        ),
-        primaryIconTheme: IconThemeData(
-          color: colorSecondP,
-        )
-
+          )
       ),
-      home: Home(),
+      themedWidgetBuilder: (context,theme){
+        return MaterialApp(
+          title: 'SPDCB Timer',
+          debugShowCheckedModeBanner: false,
+          theme: theme,
+          home: Home(),
+        );
+      }
     );
   }
 }
@@ -268,7 +282,7 @@ class _HomeState extends State<Home> {
                   isInspecting ? (15-(inspectingStopwatch.elapsedMilliseconds/1000).floor()).toString() : specialMinutes(mainStopwatch.elapsedMilliseconds/1000.0),
                   style: TextStyle(
                     fontSize: 100,
-                    color: isFreezing ? (freezingStopwatch.elapsedMilliseconds>=freezeTime ? Colors.green : Colors.red) : null,
+                    color: isFreezing ? (freezingStopwatch.elapsedMilliseconds>=freezeTime ? Colors.greenAccent[200] : Colors.red) : null,
                   ),
                 ),
               )

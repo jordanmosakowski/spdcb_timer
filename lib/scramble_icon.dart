@@ -8,11 +8,12 @@ class ScrambleIcon extends StatelessWidget {
   ScrambleIcon(this.currentId,this.id,this.icon,this.onClick);
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: (){
+    return IconButton(
+      padding: EdgeInsets.all(0),
+      onPressed: (){
         onClick(id);
       },
-      child: Icon(
+      icon: Icon(
         icon,
         size: 40,
         color: currentId==id ? Theme.of(context).textTheme.body1.color : Theme.of(context).disabledColor,
