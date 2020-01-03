@@ -15,3 +15,7 @@
 //  e555bf,
 //  e333mbf,
 //}
+
+abstract class Scrambler{
+  String newScramble();
+}
