@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:spdcb_timer_new/cubing_icons.dart';
 import 'package:spdcb_timer_new/scramble_icon.dart';
+import 'package:spdcb_timer_new/scramblers/draw.dart';
+import 'package:spdcb_timer_new/scramblers/scrambler.dart';
 import 'package:spdcb_timer_new/settings_page.dart';
 
 void main() => runApp(MyApp());
@@ -75,15 +77,17 @@ class _HomeState extends State<Home> {
   Stopwatch mainStopwatch = Stopwatch();
   Stopwatch freezingStopwatch = Stopwatch();
   Stopwatch inspectingStopwatch = Stopwatch();
-  String currentScramble = "e333";
+  TimerScrambler scrambler = TimerScrambler("e333");
 
   Timer mainTimer;
   Timer freezingTimer;
   Timer inspectingTimer;
+  String scramble;
 
   @override
   void initState() {
     super.initState();
+    scramble = scrambler.newScramble();
   }
 
   String specialMinutes(double a){
@@ -101,7 +105,8 @@ class _HomeState extends State<Home> {
 
   void changeScramble(String id){
     setState((){
-      currentScramble = id;
+      scrambler.currentType = id;
+      scramble = scrambler.newScramble();
     });
   }
 
@@ -243,6 +248,17 @@ class _HomeState extends State<Home> {
             children: <Widget>[
               Positioned(
                 top:0,
+                right:0,
+                child: CustomPaint(
+                  painter: CubePainter(scrambler.currentType,scramble),
+                  child: SizedBox(
+                    width: 300,
+                    height: 300,
+                  ),
+                ),
+              ),
+              Positioned(
+                top:0,
                 bottom:0,
                 left:0,
                 right:0,
@@ -252,28 +268,28 @@ class _HomeState extends State<Home> {
               ),
               Positioned(
                 top: 10,
-                left:0,
-                right:0,
+                left:300,
+                right:300,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Wrap(
                       children: <Widget>[
-                        ScrambleIcon(currentScramble,"e222",CubingIcons.e222,changeScramble),
-                        ScrambleIcon(currentScramble,"e333",CubingIcons.e333,changeScramble),
-                        ScrambleIcon(currentScramble,"e444",CubingIcons.e444,changeScramble),
-                        ScrambleIcon(currentScramble,"e555",CubingIcons.e555,changeScramble),
-                        ScrambleIcon(currentScramble,"e666",CubingIcons.e666,changeScramble),
-                        ScrambleIcon(currentScramble,"e777",CubingIcons.e777,changeScramble),
-                        ScrambleIcon(currentScramble,"ePyram",CubingIcons.ePyram,changeScramble),
-                        ScrambleIcon(currentScramble,"eMinx",CubingIcons.eMinx,changeScramble),
-                        ScrambleIcon(currentScramble,"eSkewb",CubingIcons.eSkewb,changeScramble),
-                        ScrambleIcon(currentScramble,"eClock",CubingIcons.eClock,changeScramble),
-                        ScrambleIcon(currentScramble,"eSq1",CubingIcons.eSq1,changeScramble),
+                        ScrambleIcon(scrambler.currentType,"e222",CubingIcons.e222,changeScramble),
+                        ScrambleIcon(scrambler.currentType,"e333",CubingIcons.e333,changeScramble),
+                        ScrambleIcon(scrambler.currentType,"e444",CubingIcons.e444,changeScramble),
+                        ScrambleIcon(scrambler.currentType,"e555",CubingIcons.e555,changeScramble),
+                        ScrambleIcon(scrambler.currentType,"e666",CubingIcons.e666,changeScramble),
+                        ScrambleIcon(scrambler.currentType,"e777",CubingIcons.e777,changeScramble),
+                        ScrambleIcon(scrambler.currentType,"ePyram",CubingIcons.ePyram,changeScramble),
+                        ScrambleIcon(scrambler.currentType,"eMinx",CubingIcons.eMinx,changeScramble),
+                        ScrambleIcon(scrambler.currentType,"eSkewb",CubingIcons.eSkewb,changeScramble),
+                        ScrambleIcon(scrambler.currentType,"eClock",CubingIcons.eClock,changeScramble),
+                        ScrambleIcon(scrambler.currentType,"eSq1",CubingIcons.eSq1,changeScramble),
                       ],
                     ),
-                    Center(child: Text("B' R' F2 L2 D2 L B2 R B2 R' F2 R2 B2 U B2 L B2 L' U B'"))
+                    Center(child: Text(scramble,style: TextStyle(fontSize: 20)))
                   ],
                 ),
               ),

@@ -426,7 +426,7 @@ class ScramblerPyram extends Scrambler {
     return [t, i];
   }
 
-  PyramNew(){
+  ScramblerPyram(){
     U();
   }
 
