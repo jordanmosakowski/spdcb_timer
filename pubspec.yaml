@@ -12,6 +12,8 @@ dependencies:
   cupertino_icons: ^0.1.2
   flutter_colorpicker: ^0.2.6
   dynamic_theme: ^1.0.1
+  js: ^0.6.1+1
+  path_provider: ^1.5.1
 
 dev_dependencies:
   flutter_test:
